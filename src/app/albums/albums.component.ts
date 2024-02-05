@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Album } from "../album";
 import { ALBUMS } from "../mock-albums";
+import { AlbumService } from "../album.service";
 
 @Component({
   selector: 'app-albums',
@@ -9,17 +10,21 @@ import { ALBUMS } from "../mock-albums";
 })
 export class AlbumsComponent  implements OnInit {
 
-  // Titre de la page 
-  titlePage : string = "Fil rouge 🔥";
+  private albumService : AlbumService;
+
+  constructor (albumService : AlbumService) {
+    this.albumService = albumService;
+  }
   // Les albums 
-  albums : Album[] = ALBUMS;
+  albums !: Album[] 
   // Reçois l'album sélectionné 
   selectedAlbum !: Album;
   // Album en cours de lecture 
   albumloading !: Album;
+  
 
   ngOnInit(): void {
-      // Nothing
+    this.albums = this.albumService.paginate(0, 10);
   }
 
   // Récupère l'identifiant de l'album selectionné
@@ -31,5 +36,15 @@ export class AlbumsComponent  implements OnInit {
   albumPlaying(album : Album) {
     this.albumloading = album;
     
+  }
+
+  // Retourne le nombre total d'album 
+  count() : number {
+    return this.albumService.getAlbums().length;
+  }
+
+  // Récupération des albums résultant de la recherche
+  albumSearched(albums : Album[]) {
+    this.albums = albums;
   }
 }
